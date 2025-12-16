@@ -1,0 +1,75 @@
+.tech-section {
+    padding: 100px 0;
+    background-color: var(--color-white);
+}
+
+.section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px;
+}
+
+.section-header .subtitle {
+    color: var(--color-medical-green);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.section-header h2 {
+    font-family: var(--font-secondary);
+    font-size: 2.5rem;
+    color: var(--color-text-dark);
+    margin-bottom: 16px;
+}
+
+.section-header p {
+    font-size: 1.1rem;
+    color: var(--color-text-grey);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.tech-card {
+    padding: 32px;
+    background: var(--color-light-grey);
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    background: #fff;
+    border-color: rgba(0, 191, 165, 0.2);
+}
+
+.icon-box {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 191, 165, 0.1);
+    color: var(--color-medical-green);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.tech-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: var(--color-text-dark);
+}
+
+.tech-card p {
+    color: var(--color-text-grey);
+    line-height: 1.6;
+}
