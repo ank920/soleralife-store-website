@@ -106,18 +106,22 @@
         display: flex;
         flex-direction: column;
         position: fixed;
-        top: 60px;
-        /* Below navbar */
+        top: 72px;
+        /* Adjusted to match navbar height + padding */
         left: 0;
         right: 0;
-        background: var(--color-white);
+        background-color: #ffffff;
+        /* Fallback */
+        background-color: var(--color-white);
         padding: 24px;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         transform: translateY(-150%);
         transition: transform 0.3s ease-in-out;
-        z-index: 999;
+        z-index: 1001;
+        /* Higher than navbar to overlap if needed, or just high enough */
         gap: 20px;
         text-align: center;
+        border-bottom: 1px solid #eee;
     }
 
     .nav-links.active {
@@ -130,11 +134,13 @@
 
     .mobile-backdrop {
         position: fixed;
-        top: 60px;
+        top: 72px;
+        /* Match nav-links top */
         left: 0;
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 998;
+        z-index: 1000;
+        backdrop-filter: blur(2px);
     }
 }

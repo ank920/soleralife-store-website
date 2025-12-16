@@ -47,7 +47,7 @@ const Home = ({ onAddToCart, isIndia }) => {
                     <TechnologySection />
                 </div>
                 <div className="section-product-teaser">
-                    <ProductTeaser isIndia={isIndia} />
+                    <ProductTeaser isIndia={isIndia} onAddToCart={onAddToCart} />
                 </div>
                 <div className="section-wholesale">
                     <WholesaleSection />

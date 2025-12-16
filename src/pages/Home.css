@@ -21,15 +21,16 @@
   /* Explicitly setting order/classes requires the components to be wrapped or identified 
      In Home.jsx we will add classes to the sections/components.
   */
-  
-  .section-hero {
-    order: 1;
-  }
 
   .section-product-teaser {
-    order: 2;
-    margin-top: 24px; /* Add some space since it's moving up */
+    order: 1;
+    margin-top: 0;
     margin-bottom: 24px;
+    padding-top: 10px;
+  }
+
+  .section-hero {
+    order: 2;
   }
 
   .section-stats {
