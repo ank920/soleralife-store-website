@@ -35,7 +35,7 @@ function App() {
             id: 'int-wipes-160',
             name: 'Accel INTERVention Disinfectant Wipes',
             spec: '160 Wipes / Canister',
-            price: isIndia ? 1200 : 29.99,
+            price: isIndia ? 2000 : 29.99,
             quantity: qty,
             image: productImg
         };

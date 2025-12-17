@@ -4,7 +4,7 @@ import './ProductTeaser.css';
 import productImg from '../assets/intervention-wipes-1.jpg';
 
 const ProductTeaser = ({ isIndia, onAddToCart }) => {
-    const price = isIndia ? '₹1,200' : '$29.99';
+    const price = isIndia ? '₹2,000' : '$29.99';
     const [quantity, setQuantity] = React.useState(1);
     const navigate = useNavigate(); // Needs 'react-router-dom' import if not already there, checking imports...
 

@@ -22,7 +22,7 @@ const ProductPage = ({ onAddToCart, isIndia }) => {
             "@type": "Offer",
             "url": "https://soleralife.com/products/accel-wipes",
             "priceCurrency": isIndia ? "INR" : "USD",
-            "price": isIndia ? "1200" : "29.99",
+            "price": isIndia ? "2000" : "29.99",
             "availability": "https://schema.org/InStock",
             "itemCondition": "https://schema.org/NewCondition"
         },

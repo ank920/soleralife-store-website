@@ -17,7 +17,7 @@ const ProductDetail = ({ onAddToCart, isIndia: isIndiaProp, headingLevel = 'h1' 
 
     // Derive effective isIndia
     const isIndia = isIndiaProp !== undefined ? isIndiaProp : localIsIndia;
-    const price = isIndia ? 1200 : 29.99;
+    const price = isIndia ? 2000 : 29.99;
 
     const handleIncrement = () => setQuantity(prev => prev + 1);
     const handleDecrement = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
@@ -74,7 +74,7 @@ const ProductDetail = ({ onAddToCart, isIndia: isIndiaProp, headingLevel = 'h1' 
                         ) : isIndia ? (
                             <div className="product-price india-price">
                                 <div className="price-row">
-                                    <span className="amount">₹1,200</span>
+                                    <span className="amount">₹2,000</span>
                                 </div>
                                 <span className="unit">+ GST (India Warehouse)</span>
                             </div>

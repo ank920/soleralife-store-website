@@ -11,7 +11,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
     // Let's keep logic simple: India triggers bank transfer modal on checkout, US goes to Payment Gateway.
 
     // For consistency with ProductDetail logic:
-    // India Price: 1200 + GST (18%)
+    // India Price: 2000 + GST (18%)
     // US Price: 29.99 USD
 
     const currency = isIndia ? '₹' : '$';
