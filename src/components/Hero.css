@@ -197,3 +197,20 @@
         font-size: 1.8rem;
     }
 }
+
+@media (max-width: 480px) {
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-lg {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+}

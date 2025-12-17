@@ -14,8 +14,16 @@ import AboutUs from './pages/AboutUs';
 import productImg from './assets/intervention-wipes-1.jpg';
 
 function App() {
-    const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState(() => {
+        const savedCart = localStorage.getItem('cart');
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
+
     const [isIndia, setIsIndia] = useState(true); // Forced to India (INR)
+
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart]);
 
     // Geo-detection removed to force INR everywhere
     /*

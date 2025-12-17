@@ -59,3 +59,9 @@
     color: var(--color-text-grey);
     line-height: 1.5;
 }
+
+@media (max-width: 768px) {
+    .stats-section {
+        padding: 40px 0;
+    }
+}

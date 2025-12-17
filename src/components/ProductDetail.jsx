@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Minus, Plus, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, CheckCircle, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './ProductDetail.css';
 import productImg from '../assets/intervention-wipes-1.jpg';
 import detailsImg from '../assets/wipes_details.webp';
 
+// New Gallery Images
+import waImg1 from '../assets/product/WhatsApp Image 2025-12-17 at 1.49.2.jpeg';
+import waImg2 from '../assets/product/WhatsApp Image 2025-12-17 at 1.49.20 .jpeg';
+import waImg3 from '../assets/product/WhatsApp Image 2025-12-17 at 1.49.20 PM.jpeg';
+import waImg4 from '../assets/product/WhatsApp Image 2025-12-17 at 1.49.21 PM.jpeg';
+
 const ProductDetail = ({ onAddToCart, isIndia: isIndiaProp, headingLevel = 'h1' }) => {
     const navigate = useNavigate();
     const [quantity, setQuantity] = useState(1);
-    const [activeImg, setActiveImg] = useState(productImg);
+
+    // Gallery State
+    const galleryImages = [productImg, detailsImg, waImg1, waImg2, waImg3, waImg4];
+    const [activeImg, setActiveImg] = useState(galleryImages[0]);
+    const [showAllImages, setShowAllImages] = useState(false);
+
+    // Initial visible images (always show at least productImg and detailsImg)
+    const initialCount = 2;
+    const visibleImages = showAllImages ? galleryImages : galleryImages.slice(0, initialCount);
+    const hiddenCount = galleryImages.length - initialCount;
 
     // Use prop if available, otherwise local state (though mostly driven by App now)
     const [localIsIndia, setLocalIsIndia] = useState(false);
@@ -46,15 +61,24 @@ const ProductDetail = ({ onAddToCart, isIndia: isIndiaProp, headingLevel = 'h1' 
                     <div className="main-image">
                         <img src={activeImg} alt="Accel INTERVention Wipes" />
                     </div>
-                    <div className="thumbnails">
-                        <div className={`thumb ${activeImg === productImg ? 'active' : ''}`} onClick={() => setActiveImg(productImg)}>
-                            <img src={productImg} alt="Product Main" />
+                    <div className="thumbnails-scroll-container">
+                        <div className="thumbnails">
+                            {visibleImages.map((img, index) => (
+                                <div
+                                    key={index}
+                                    className={`thumb ${activeImg === img ? 'active' : ''}`}
+                                    onClick={() => setActiveImg(img)}
+                                >
+                                    <img src={img} alt={`View ${index + 1}`} />
+                                </div>
+                            ))}
+                            {!showAllImages && hiddenCount > 0 && (
+                                <div className="thumb see-more-thumb" onClick={() => setShowAllImages(true)}>
+                                    <span>+{hiddenCount}</span>
+                                    <small>See More</small>
+                                </div>
+                            )}
                         </div>
-                        <div className={`thumb ${activeImg === detailsImg ? 'active' : ''}`} onClick={() => setActiveImg(detailsImg)}>
-                            <img src={detailsImg} alt="Product Details" />
-                        </div>
-                        <div className="thumb"><div className="thumb-placeholder"></div></div>
-                        <div className="thumb"><div className="thumb-placeholder"></div></div>
                     </div>
                 </div>
 
@@ -111,6 +135,22 @@ const ProductDetail = ({ onAddToCart, isIndia: isIndiaProp, headingLevel = 'h1' 
                                     <li><strong>Active:</strong> Hydrogen Peroxide 0.5% w/w</li>
                                     <li><strong>Origin:</strong> Imported from Canada</li>
                                 </ul>
+                            </div>
+                        </div>
+
+                        {/* Safety Highlight Section */}
+                        <div className="safety-highlight">
+                            <div className="safety-header">
+                                <AlertTriangle size={24} color="#e53935" />
+                                <h4>Safety & Expiry Information</h4>
+                            </div>
+                            <div className="safety-content">
+                                <p><strong>Expiration Date:</strong> <span className="expiry-date">06/22/2027</span></p>
+                                <p className="safety-warning">
+                                    <strong>Usage Warning:</strong> For professional use. Use personal protective equipment (PPE) as required.
+                                    Keep out of reach of children. Store in a cool, dry place away from direct sunlight.
+                                    Refer to Safety Data Sheet (SDS) before use.
+                                </p>
                             </div>
                         </div>
 
