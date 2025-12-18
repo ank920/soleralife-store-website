@@ -9,6 +9,7 @@ import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
 import ProductPage from './pages/ProductPage';
 import AboutUs from './pages/AboutUs';
+import PromoBanner from './components/PromoBanner';
 
 // Placeholder image import (should really be in a data file)
 import productImg from './assets/intervention-wipes-1.jpg';
@@ -75,6 +76,7 @@ function App() {
 
     return (
         <div className="app">
+            <PromoBanner />
             <TrustBar />
             <Navbar cartCount={cartCount} />
 

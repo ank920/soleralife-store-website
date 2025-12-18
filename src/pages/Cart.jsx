@@ -8,6 +8,11 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
     const [loading, setLoading] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
 
+    // Coupon State
+    const [couponCode, setCouponCode] = useState('');
+    const [activeCoupon, setActiveCoupon] = useState(null);
+    const [couponMessage, setCouponMessage] = useState({ type: '', text: '' });
+
     // Checkout Form State
     const [formData, setFormData] = useState({
         name: '',
@@ -21,11 +26,100 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
     const RAZORPAY_KEY = "rzp_live_Rsa57CUtCLd0Fv";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8Jw4XUtgq7YchxlahQcaWIXvoPQasKGnCDjMT2DR0l_b_02BEjoxs56UuSHpRjobg/exec";
 
+    // Detailed Coupons List
+    const availableCoupons = [
+        {
+            code: 'NY2026',
+            description: 'The "New Year" Celebration',
+            discountType: 'flat',
+            discountValue: 700,
+            minOrder: 0,
+            style: 'festive'
+        },
+        {
+            code: 'NEWYEAR30',
+            description: 'New Year Special 30% Off',
+            discountType: 'percent',
+            discountValue: 30, // 30%
+            minOrder: 0,
+            style: 'gold'
+        },
+        {
+            code: 'SOLERANEW',
+            description: 'The "Welcome" Offer',
+            discountType: 'flat',
+            discountValue: 600,
+            minOrder: 0,
+            style: 'welcome'
+        },
+        {
+            code: 'FITNESS25',
+            description: 'The "Health First" Daily Deal',
+            discountType: 'flat',
+            discountValue: 500,
+            minOrder: 0,
+            style: 'health'
+        },
+        {
+            code: 'TRY1700',
+            description: 'The "Treat Yourself" Mid-Range',
+            discountType: 'flat',
+            discountValue: 300,
+            minOrder: 0,
+            style: 'standard'
+        },
+        {
+            code: 'CASHBACK100',
+            description: 'The "Smart Saver"',
+            discountType: 'flat',
+            discountValue: 100,
+            minOrder: 0,
+            style: 'saver'
+        }
+    ];
+
+
+    const applyCoupon = (codeToApply) => {
+        const code = codeToApply || couponCode;
+        if (!code) return;
+
+        const coupon = availableCoupons.find(c => c.code.toUpperCase() === code.toUpperCase());
+
+        if (coupon) {
+            setActiveCoupon(coupon);
+            setCouponCode(coupon.code); // Sync input
+            setCouponMessage({ type: 'success', text: `Coupon ${coupon.code} applied!` });
+        } else {
+            setActiveCoupon(null);
+            setCouponMessage({ type: 'error', text: 'Invalid Coupon Code' });
+        }
+    };
+
+    const removeCoupon = () => {
+        setActiveCoupon(null);
+        setCouponCode('');
+        setCouponMessage({ type: '', text: '' });
+    };
+
     // Calculate totals
     const shipping = isIndia ? 0 : 9.99;
     const currency = isIndia ? '₹' : '$';
 
-    const finalTotalValue = isIndia ? (total * 1.18) : (total + shipping);
+    let discountAmount = 0;
+    if (activeCoupon) {
+        if (activeCoupon.discountType === 'flat') {
+            // Flat discount PER ITEM based on req: "700 Off (Price: 1300)" => Base 2000 - 700.
+            const totalQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+            discountAmount = activeCoupon.discountValue * totalQty;
+        } else if (activeCoupon.discountType === 'percent') {
+            discountAmount = (total * activeCoupon.discountValue) / 100;
+        }
+    }
+
+    // Ensure total doesn't go below 0
+    const discountedSubtotal = Math.max(0, total - discountAmount);
+
+    const finalTotalValue = isIndia ? (discountedSubtotal * 1.18) : (discountedSubtotal + shipping);
     const finalTotalDisplay = isIndia
         ? Math.round(finalTotalValue).toLocaleString()
         : finalTotalValue.toFixed(2);
@@ -38,16 +132,12 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
         try {
             const orderData = {
                 orderId: orderId,
-                fullName: formData.name, // Updated key
+                fullName: formData.name,
                 phone: formData.phone,
                 items: cartItems.map(item => `${item.name} (x${item.quantity})`).join(', '),
-                amount: `${currency}${finalTotalDisplay}`,
-                status: status, // "Paid" or "Cancelled"
-                address: `${formData.address}, ${formData.city}, ${formData.pincode}`, // Combined address
-                // razorpayPaymentId: paymentId // Removed if not needed by script, or kept if useful. User didn't explicit ask to remove but didn't list it in payload reqs. Keeping it out to match spec strictly if desired, or adding if harmless. 
-                // Spec said: "The JSON payload... must include the following fields... orderId, fullName, phone, items, amount, status, address". 
-                // It did NOT list razorpayPaymentId. I will omit it to be safe, or include it if I think it helps tracking.
-                // Let's stick to the list strictly to avoid error if script is strict.
+                amount: `${currency}${finalTotalDisplay} ${activeCoupon ? `(Code: ${activeCoupon.code})` : ''}`,
+                status: status,
+                address: `${formData.address}, ${formData.city}, ${formData.pincode}`,
             };
 
             await fetch(GOOGLE_SCRIPT_URL, {
@@ -60,20 +150,19 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
             });
             console.log("Order submitted to Google Sheet: " + status);
 
-            // Only set Success for Paid orders
             if (status === "Paid") {
                 setLoading(false);
                 setOrderSuccess(true);
             }
         } catch (error) {
             console.error("Error submitting to Google Sheet", error);
-            if (status === "Paid") setLoading(false); // Ensure loading stops on error too
+            if (status === "Paid") setLoading(false);
         }
     };
 
     const handlePaymentSuccess = (response) => {
         const paymentId = response.razorpay_payment_id;
-        const orderId = `SL-${Date.now()}`; // Updated prefix to SL-
+        const orderId = `SL-${Date.now()}`;
 
         submitOrderToGoogleSheet(paymentId, orderId, "Paid");
     };
@@ -85,7 +174,6 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
     };
 
     const initiatePayment = () => {
-        // Basic Validation
         if (!formData.name || !formData.email || !formData.phone || !formData.address) {
             alert("Please fill in all shipping details.");
             return;
@@ -100,7 +188,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
 
         const options = {
             key: RAZORPAY_KEY,
-            amount: Math.round(finalTotalValue * 100), // Amount in paise
+            amount: Math.round(finalTotalValue * 100),
             currency: "INR",
             name: "Solera Life Sciences",
             description: "Purchase of Accel Wipes",
@@ -125,9 +213,6 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
 
         const rzp1 = new window.Razorpay(options);
         rzp1.on('payment.failed', function (response) {
-            // alert("Payment Failed: " + response.error.description); 
-            // Maybe logging failed status too? Spec didn't mention "Failed", only "Cancelled".
-            // I'll leave alert for failed.
             setLoading(false);
         });
         rzp1.open();
@@ -174,30 +259,34 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
                     {/* Left Column: Cart Items or Checkout Form */}
                     <div className="cart-items">
                         {!showCheckout ? (
-                            cartItems.map(item => (
-                                <div key={item.id} className="cart-item">
-                                    <div className="item-image">
-                                        <img src={item.image} alt={item.name} />
-                                    </div>
-                                    <div className="item-details">
-                                        <h3>{item.name}</h3>
-                                        <p className="item-spec">{item.spec}</p>
-                                        <div className="item-price">
-                                            {currency}{isIndia ? item.price.toLocaleString() : item.price}
+                            <>
+                                {cartItems.map(item => (
+                                    <div key={item.id} className="cart-item">
+                                        <div className="item-image">
+                                            <img src={item.image} alt={item.name} />
+                                        </div>
+                                        <div className="item-details">
+                                            <h3>{item.name}</h3>
+                                            <p className="item-spec">{item.spec}</p>
+                                            <div className="item-price">
+                                                {currency}{isIndia ? item.price.toLocaleString() : item.price}
+                                            </div>
+                                        </div>
+                                        <div className="item-actions">
+                                            <div className="qty-control">
+                                                <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                                                <span>{item.quantity}</span>
+                                                <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                                            </div>
+                                            <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
+                                                <Trash2 size={18} />
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="item-actions">
-                                        <div className="qty-control">
-                                            <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
-                                            <span>{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                                        </div>
-                                        <button className="remove-btn" onClick={() => removeFromCart(item.id)}>
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
+                                ))}
+
+
+                            </>
                         ) : (
                             <div className="checkout-form-container">
                                 <h3 className="checkout-form-header">Shipping Details</h3>
@@ -241,6 +330,14 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
                             <span>Subtotal</span>
                             <span>{currency}{isIndia ? total.toLocaleString() : total.toFixed(2)}</span>
                         </div>
+
+                        {activeCoupon && (
+                            <div className="summary-row discount-row">
+                                <span>Coupon ({activeCoupon.code})</span>
+                                <span className="discount-amount">- {currency}{discountAmount.toLocaleString()}</span>
+                            </div>
+                        )}
+
                         <div className="summary-row">
                             <span>Shipping</span>
                             <span>{isIndia ? 'Free (Warehouse)' : `$${shipping}`}</span>
@@ -248,13 +345,34 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, total, isIndia }) => 
                         {isIndia && (
                             <div className="summary-row">
                                 <span>GST (18%)</span>
-                                <span>{currency}{(total * 0.18).toLocaleString()}</span>
+                                <span>{currency}{Math.round(discountedSubtotal * 0.18).toLocaleString()}</span>
                             </div>
                         )}
                         <div className="summary-total">
                             <span>Total</span>
                             <span>{currency}{finalTotalDisplay}</span>
                         </div>
+
+                        {/* Manual Coupon Input */}
+                        <div className="coupon-input-group">
+                            <input
+                                type="text"
+                                placeholder="Have a coupon code?"
+                                value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value)}
+                                disabled={!!activeCoupon}
+                            />
+                            {activeCoupon ? (
+                                <button className="btn-remove-coupon" onClick={removeCoupon}>Remove</button>
+                            ) : (
+                                <button className="btn-apply-coupon" onClick={() => applyCoupon()}>Apply</button>
+                            )}
+                        </div>
+                        {couponMessage.text && (
+                            <div className={`coupon-message ${couponMessage.type}`}>
+                                {couponMessage.text}
+                            </div>
+                        )}
 
                         <div className="trust-badges-cart">
                             <div className="badge"><ShieldCheck size={16} /> Secure Checkout</div>

@@ -1,0 +1,132 @@
+.promo-banner-overlay {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+
+.promo-banner {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 320px;
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.promo-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FF4500);
+}
+
+.promo-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.promo-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000;
+}
+
+.promo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-size: 1.1rem;
+}
+
+.promo-icon {
+    font-size: 1.5rem;
+}
+
+.promo-desc {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.promo-code-container {
+    background: #f0fdf4;
+    border: 1px dashed #00BFA5;
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.promo-code-container:hover {
+    transform: scale(1.02);
+    background: #e6fffa;
+}
+
+.promo-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #00897b;
+    font-weight: 600;
+}
+
+.promo-code {
+    font-family: monospace;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #004d40;
+    letter-spacing: 1px;
+}
+
+.promo-copy-hint {
+    font-size: 0.7rem;
+    color: #00796b;
+    margin-top: 2px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .promo-banner-overlay {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem; /* Full width on mobile mostly */
+        justify-content: center;
+    }
+
+    .promo-banner {
+        width: 100%;
+        max-width: 400px;
+    }
+}
