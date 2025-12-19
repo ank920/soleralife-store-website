@@ -27,8 +27,7 @@ const Footer = () => {
                         <div className="contact-item">
                             <MapPin size={16} />
                             <span>
-                                <strong>Solera Life Sciences Pvt. Ltd.</strong><br />
-                                124, Uday Park, New Delhi, 110049<br />
+                                <strong>Solera Life Sciences Pvt. Ltd.</strong>
                             </span>
                         </div>
                         {/* Phone number removed as per request */}
@@ -36,7 +35,7 @@ const Footer = () => {
                             <Mail size={16} /> <span>Info@Soleralife.Store</span>
                         </div>
                         <div className="contact-item">
-                            <a href="https://wa.me/919958966881" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'inherit', textDecoration: 'none' }}>
+                            <a href="https://wa.me/917505948319" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: 'inherit', textDecoration: 'none' }}>
                                 <Phone size={16} /> <span>WhatsApp</span>
                             </a>
                         </div>
